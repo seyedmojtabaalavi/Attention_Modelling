@@ -5,6 +5,7 @@ import Networking
 import Simulation
 import Recorder
 from scipy.optimize import curve_fit
+import scipy.io as sio
 
 t = 700
 res = 1
@@ -62,24 +63,39 @@ n_trials = 1
 distances = np.zeros((n_trials, len(d_list)))
 weits = np.zeros((n_trials, len(d_list)))
 
+# for x in range(n_trials):
+#     distance = []
+#     for i in range(np.size(Nrns, 0)):
+#         print(i)
+#         for j in range(np.size(Nrns, 1)):
+#
+#             for k in range(np.size(Nrns, 0)):
+#                 for l in range(np.size(Nrns, 1)):
+#                     if i != k or j != l:
+#                         dist = np.sqrt((i - k) ** 2 + (j - l) ** 2)
+#                         prob = dist / np.sqrt(np.size(Nrns, 0) ** 2 + np.size(Nrns, 1) ** 2)
+#                         rand = np.random.normal()
+#                         if rand >= prob and rand >= 0:
+#                             w = (np.random.normal() + 0.75) * 0.35 * (1 - prob)
+#                             net.connect(Nrns[i, j], Nrns[k, l], w)
+#                             distances[x, np.where(d_list == dist)[0]] += 1
+#                             weits[x, np.where(d_list == dist)[0]] = w
+
+    # distances.append(distance)
+
+indexes = sio.loadmat('indexes.mat')
+i_indx = indexes['i']
+j_indx = indexes['j']
+
 for x in range(n_trials):
     distance = []
     for i in range(np.size(Nrns, 0)):
+        print(i)
         for j in range(np.size(Nrns, 1)):
 
-            for k in range(np.size(Nrns, 0)):
-                for l in range(np.size(Nrns, 1)):
-                    if i != k or j != l:
-                        dist = np.sqrt((i - k) ** 2 + (j - l) ** 2)
-                        prob = dist / np.sqrt(np.size(Nrns, 0) ** 2 + np.size(Nrns, 1) ** 2)
-                        rand = np.random.normal()
-                        if rand >= prob and rand >= 0:
-                            w = (np.random.normal() + 0.75) * 0.35 * (1 - prob)
-                            net.connect(Nrns[i, j], Nrns[k, l], w)
-                            distances[x, np.where(d_list == dist)[0]] += 1
-                            weits[x, np.where(d_list == dist)[0]] = w
+            for l in range(min(len(i_indx[i][j][0]), len(j_indx[i][j][0]))):
 
-    # distances.append(distance)
+                net.connect(Nrns[i, j], Nrns[i_indx[i][j][0][l], j_indx[i][j][0][l]], 1)
 
 m_distances = np.mean(distances, 0)
 m_weits = np.mean(weits, 0)
