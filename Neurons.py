@@ -39,6 +39,9 @@ class FEF:
     def get_id(self):
         return self.id
 
+    def set_id(self, id):
+        self.id = id
+
     def get_type(self):
         return self.type
 
